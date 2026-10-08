@@ -1,0 +1,13 @@
+<Project>
+ <PropertyGroup>
+  <_KapuschPostHogNativeRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)../native'))</_KapuschPostHogNativeRoot>
+  <_KapuschPostHogNativeRoot Condition="'$(UseKapuschPostHogiOSInteropFromSource)' == 'true'">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)../Native/iOS/build'))</_KapuschPostHogNativeRoot>
+ </PropertyGroup>
+ <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+  <NativeReference Include="$(_KapuschPostHogNativeRoot)/kposthog.xcframework"><Kind>Static</Kind><ForceLoad>true</ForceLoad><Frameworks>Foundation UIKit Network SystemConfiguration</Frameworks></NativeReference>
+  <BundleResource Include="$(_KapuschPostHogNativeRoot)/resources/**/*"><Link>%(RecursiveDir)%(Filename)%(Extension)</Link></BundleResource>
+ </ItemGroup>
+ <Target Name="ValidatePostHogIosConsumer" BeforeTargets="CoreCompile" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+  <Error Condition="!Exists('$(_KapuschPostHogNativeRoot)/kposthog.xcframework/Info.plist')" Text="Missing PostHog native SDK artifacts."/>
+ </Target>
+</Project>
