@@ -3,6 +3,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PACKAGE_DIR="$ROOT_DIR/KapuschPostHogInterop"
+REPO_DIR="$(cd "$ROOT_DIR/../../../.." && pwd)"
+mkdir -p "$REPO_DIR/artifacts/nuget"
 BUILD_DIR="$ROOT_DIR/build"
 
 XCFRAMEWORK_OUT="$BUILD_DIR/kposthog.xcframework"
