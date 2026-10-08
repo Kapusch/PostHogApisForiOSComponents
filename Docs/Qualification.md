@@ -17,3 +17,10 @@ Native compilation and packed NuGet Release sample build passed locally on
 SDK 35, Java 17-compatible bytecode, optimized .NET Android consumer.
 This proves package linking only; phone ingestion/restart/identity tests remain
 pending. No NuGet.org publication or production readiness is claimed.
+
+Runtime sample passed on iOS 18.3 x64 simulator. Native setup/capture/flush ABI
+resolved, the anonymous ID survived process termination/relaunch, and all three
+original queued records remained on disk afterward (five total after relaunch).
+Loopback endpoint intentionally refused connections, so this proves local retry
+and persistence only, not ingestion or return-to-network delivery. The two
+upstream privacy manifests are present in the packed consumer app bundle.
