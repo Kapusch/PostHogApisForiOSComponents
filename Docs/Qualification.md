@@ -29,3 +29,12 @@ The packed sample also linked for unsigned iOS ARM64 device. GitHub Actions now
 passes native build, package layout and optimized simulator consumer with the
 pinned 10.0.203 workload set and Xcode 26.3. The first floating-workload run
 failed on the Xcode version requirement; the explicit pin resolves that mismatch.
+
+## Manual publication
+
+After device qualification, configure repository Actions secret NUGET_API_KEY
+scoped to this package on NuGet.org. Run Publish verified NuGet package on main.
+The workflow rebuilds, scans, packs and links a consumer before publishing the
+version declared in the project. Never overwrite a published version; increment
+the project and sample versions for subsequent releases. No publication runs
+automatically on push. Device qualification remains a human-reviewed prerequisite.
