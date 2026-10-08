@@ -24,3 +24,8 @@ original queued records remained on disk afterward (five total after relaunch).
 Loopback endpoint intentionally refused connections, so this proves local retry
 and persistence only, not ingestion or return-to-network delivery. The two
 upstream privacy manifests are present in the packed consumer app bundle.
+
+The packed sample also linked for unsigned iOS ARM64 device. GitHub Actions now
+passes native build, package layout and optimized simulator consumer with the
+pinned 10.0.203 workload set and Xcode 26.3. The first floating-workload run
+failed on the Xcode version requirement; the explicit pin resolves that mismatch.
