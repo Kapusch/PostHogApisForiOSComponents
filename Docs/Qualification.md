@@ -32,7 +32,9 @@ failed on the Xcode version requirement; the explicit pin resolves that mismatch
 
 ## Manual publication
 
-After device qualification, configure repository Actions secret NUGET_API_KEY
+After device qualification, configure a NuGet.org Trusted Publishing policy
+for this repository and workflow `publish.yml`, using the NuGet profile `Kapusch`.
+The job uses GitHub OIDC through `NuGet/login@v1`; no permanent API key is required
 scoped to this package on NuGet.org. Run Publish verified NuGet package on main.
 The workflow rebuilds, scans, packs and links a consumer before publishing the
 version declared in the project. Never overwrite a published version; increment
