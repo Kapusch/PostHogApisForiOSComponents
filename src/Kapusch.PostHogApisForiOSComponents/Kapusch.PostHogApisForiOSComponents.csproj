@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+ <PropertyGroup>
+  <TargetFramework>net10.0-ios</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+  <DefaultItemExcludes>$(DefaultItemExcludes);Native/**</DefaultItemExcludes>
+  <PackageId>Kapusch.PostHog.iOS</PackageId><AssemblyName>Kapusch.PostHog.iOS</AssemblyName><Authors>Kapusch</Authors>
+  <Version>0.1.0</Version><Description>Thin interop for the official PostHog iOS SDK with native disk persistence.</Description>
+  <PackageLicenseExpression>MIT</PackageLicenseExpression><RepositoryUrl>https://github.com/Kapusch/PostHogApisForiOSComponents</RepositoryUrl>
+  <PackageReadmeFile>nuget-readme.md</PackageReadmeFile><NoWarn>$(NoWarn);NU5128</NoWarn>
+ </PropertyGroup>
+ <ItemGroup>
+  <None Remove="Native/**"/><Content Remove="Native/**"/>
+  <None Include="buildTransitive/**" Pack="true" PackagePath="buildTransitive/"/>
+  <None Include="nuget-readme.md" Pack="true" PackagePath="/"/>
+  <None Include="../../THIRD_PARTY_NOTICES.md" Pack="true" PackagePath="/"/>
+  <None Include="../../ThirdPartyLicenses/**" Pack="true" PackagePath="licenses/"/>
+  <None Include="Native/iOS/build/kposthog.xcframework/**" Pack="true" PackagePath="native/kposthog.xcframework/"/>
+  <None Include="Native/iOS/build/resources/**" Pack="true" PackagePath="native/resources/"/>
+ </ItemGroup>
+ <Target Name="ValidateNativeAssets" BeforeTargets="GenerateNuspec">
+  <Error Condition="!Exists('Native/iOS/build/kposthog.xcframework/Info.plist')" Text="Build the native wrapper before packing."/>
+ </Target>
+</Project>
