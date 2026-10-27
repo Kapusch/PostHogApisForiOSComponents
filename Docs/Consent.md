@@ -100,10 +100,34 @@ change the in-memory state. With `PersistOptOut = true`:
    With the default `false`, capture resumes without the user opting in.
 
 Calling `OptOut()` again after `Reset()` does not restore the record: the SDK
-is still opted out in memory and returns early without writing. Also,
-`Reset()` requests feature flags for the new anonymous ID even while opted
-out.
+is still opted out in memory and returns early without writing.
 
-To avoid the issue, set `PersistOptOut = false` and pass the app's stored
-decision as `OptOut` on every launch, as in the example above. The SDK then
-never reads its own record, so `Reset()` cannot change the outcome.
+To avoid this, set `PersistOptOut = false` and pass the app's stored decision
+as `OptOut` on every launch, as in the example above. The SDK then never reads
+its own record, so `Reset()` cannot change the outcome. This fixes only the
+persisted record; it does not stop the request below.
+
+## Reset() sends a feature flag request, even while opted out
+
+Upstream `reset()` (3.92.5, `PostHogSDK.reset`) calls
+`remoteConfig?.reloadFeatureFlags()` and neither checks the opt-out state.
+Every `Reset()` after `Configure` therefore sends `POST <host>/flags?v=2`,
+whatever `OptOut` and `PersistOptOut` say. The body carries:
+
+- `api_key`: the public project key;
+- `distinct_id` and `$anon_distinct_id`: the new anonymous ID;
+- `$device_id`: the persistent device ID, seeded from the first anonymous ID
+  and kept across `Reset()`, so it links the request to earlier launches;
+- `timezone`: the device's time zone identifier;
+- `person_properties`: the default person properties (`$app_version`,
+  `$app_build`, `$app_namespace`, `$os_name`, `$os_version`, `$device_type`,
+  `$lib`, `$lib_version`), since the wrapper keeps the upstream default
+  `setDefaultPersonProperties = true`;
+- `groups` (empty unless groups were set) and `geoip_disable` (`false`, so the
+  server may resolve the IP address to a location).
+
+No event is queued, but this is a request with a stable device identifier and
+device properties. While `IsOptOut` is true, call `Reset()` only when an
+identified user must be cleared from disk. Every call sends a `/flags`
+request with the device ID. If capture was never enabled in this install,
+`Identify` stored nothing, so there is nothing to clear.

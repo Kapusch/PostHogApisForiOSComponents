@@ -7,11 +7,14 @@ apps.
 
 Capture is enabled by default, as upstream. If the app needs consent first,
 start opted out and opt in after consent; see [consent and opt-out](Consent.md)
-for what the SDK stores and sends before and after, and for the `Reset()` caveat.
+for what the SDK stores and sends before and after, and for the `Reset()` caveats.
 
 Use native anonymous identity until sign-in; identify with a stable account ID.
-Call Reset on logout and before direct account A to B transitions. Never identify
-one account as another. Persist business event IDs to deduplicate downstream.
+Call Reset on logout and before direct account A to B transitions. While
+`IsOptOut` is true, call `Reset()` only when an identified user must be cleared
+from disk. Every call sends a `/flags` request with the device ID (see
+[consent](Consent.md#reset-sends-a-feature-flag-request-even-while-opted-out)).
+Never identify one account as another. Persist business event IDs to deduplicate downstream.
 Flush requests sending; it does not await or prove ingestion. Auto screen
 capture and replay are disabled; lifecycle capture is configurable. SDK debug
 logs may contain event properties; disable in production and redact before
