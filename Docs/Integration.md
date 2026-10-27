@@ -22,19 +22,39 @@ sharing.
 
 ## API example
 
+The calls below belong to different moments of the app, not to one sequence.
+
 ```csharp
 using Kapusch.PostHog.iOS;
 
+// Startup, once per process, before any other call:
 NativePostHog.Configure("phc_example", "https://eu.i.posthog.com", new NativePostHogOptions
 {
-    OptOut = !userHasConsented, // omit to keep the upstream default: capture enabled
-    PersistOptOut = false,      // the app stores consent and passes it on every launch
+    OptOut = !consentStore.HasAnalyticsConsent, // omit to keep the upstream default: capture enabled
+    PersistOptOut = false,                      // the app stores consent and passes it on every launch
 });
-NativePostHog.OptIn();          // after consent; NativePostHog.OptOut() withdraws it
+
+// When the user grants consent (for example from a consent prompt callback):
+consentStore.HasAnalyticsConsent = true;
+NativePostHog.OptIn();
+
+// When the user withdraws consent:
+consentStore.HasAnalyticsConsent = false;
+NativePostHog.OptOut();
+
+// Anywhere after Configure; ignored while opted out:
 NativePostHog.Capture("item_completed", "{\"item_id\":\"example\"}");
+
+// On sign-in; ignored, and not stored, while opted out:
 NativePostHog.Identify("account-example");
+
+// On logout or before switching accounts (see the opted-out note above):
 NativePostHog.Reset();
 ```
+
+`OptIn()`, `OptOut()`, `Capture`, `Identify` and `Reset()` do nothing before
+`Configure`: the upstream SDK returns early when it is not set up. A consent
+decision taken before `Configure` must be passed as `OptOut` instead.
 
 `Configure(key, host, debug, captureLifecycle)` remains available and uses the
 default options. `NativePostHog.IsOptOut` reports the current state.
