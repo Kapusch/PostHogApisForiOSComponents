@@ -72,3 +72,23 @@ once before using this singleton API.
 The native entry point is now `kph_setup_v2`; managed and native code ship in
 the same package, so no consumer change is needed. Existing calls keep their
 behavior. `OptIn`, `OptOut` and `IsOptOut` defer to the upstream SDK.
+
+### Moving a saved opt-out to the app's consent store
+
+A 0.1.0 app that called `OptOut()` with the default persistence left the
+choice in the SDK's `posthog.optOut` record. With `PersistOptOut = false` that
+record is never read, so a consent store that starts as "consented" for
+existing users would resume capture for users who had opted out. Migrate once:
+
+1. On the first launch after the upgrade, before the store has a decision,
+   configure with `PersistOptOut = true` and `OptOut` set to the app's default
+   for a user who never chose (`true` for consent first, `false` otherwise).
+   A saved record wins over that value.
+2. Copy `NativePostHog.IsOptOut` into the app's consent store and mark the
+   migration as done.
+3. From the next launch, configure with `PersistOptOut = false` and the stored
+   decision as `OptOut`.
+
+`Configure` runs once per process, so the switch to `PersistOptOut = false`
+takes effect at the next launch. A record already deleted by `Reset()` under
+0.1.0 cannot be recovered; that user starts from the app's default.
