@@ -109,6 +109,9 @@ public static class NativePostHog
     /// Clears identity and super properties and starts a new anonymous ID. The native SDK also deletes
     /// its persisted opt-out record: the running process stays opted out, but the next launch starts
     /// from <see cref="NativePostHogOptions.OptOut"/> again.
+    /// While <see cref="IsOptOut"/> is true, call <c>Reset()</c> only when an identified user must be cleared
+    /// from disk. Every call sends a <c>/flags</c> request with the device ID, the new anonymous ID, the time
+    /// zone and default device properties, whatever <see cref="NativePostHogOptions.PersistOptOut"/> says.
     /// </summary>
     [DllImport("__Internal", EntryPoint = "kph_reset")]
     public static extern void Reset();
