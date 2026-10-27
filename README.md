@@ -10,7 +10,7 @@ storage limits. A returned call is not proof of
 network delivery. Replay, surveys and feature flags are not exposed or qualified.
 
 See [integration](Docs/Integration.md), [consent](Docs/Consent.md),
-[source builds](Docs/SourceMode.md), [qualification](Docs/Qualification.md), [samples](samples/README.md) and
+[source builds](Docs/SourceMode.md), [qualification](Docs/Qualification.md), [samples](samples/README.md), [changelog](CHANGELOG.md) and
 [third-party licenses](THIRD_PARTY_NOTICES.md).
 
 Build native artifacts with `bash src/Kapusch.PostHogApisForiOSComponents/Native/iOS/build.sh`, then:
