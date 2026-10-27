@@ -1,7 +1,7 @@
 # PostHogApisForiOSComponents
 
 Public .NET 10 iOS interop for the official PostHog mobile SDK.
-NuGet ID: **Kapusch.PostHog.iOS**. Version 0.1.0 is a qualification build.
+NuGet ID: **Kapusch.PostHog.iOS**. The next release is 1.0.0-rc.1 (0.1.0 was a qualification build).
 
 The thin wrapper exposes setup, identify/reset, capture, flush, distinct ID and
 opt-in/out. Persistence, batching, retry and lifecycle belong to PostHog, with
