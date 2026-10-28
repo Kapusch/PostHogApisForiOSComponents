@@ -1,15 +1,16 @@
 # PostHogApisForiOSComponents
 
 Public .NET 10 iOS interop for the official PostHog mobile SDK.
-NuGet ID: **Kapusch.PostHog.iOS**. Version 0.1.0 is a qualification build.
+NuGet ID: **Kapusch.PostHog.iOS**. The next release is 1.0.0-rc.1 (0.1.0 was a qualification build).
 
 The thin wrapper exposes setup, identify/reset, capture, flush, distinct ID and
-opt-in/out. Persistence, batching, retry and lifecycle belong to PostHog, with
-its bounded queue and platform storage limits. A returned call is not proof of
+opt-in/out, including starting opted out until consent. Persistence, batching,
+retry and lifecycle belong to PostHog, with its bounded queue and platform
+storage limits. A returned call is not proof of
 network delivery. Replay, surveys and feature flags are not exposed or qualified.
 
-See [integration](Docs/Integration.md), [source builds](Docs/SourceMode.md),
-[qualification](Docs/Qualification.md), [samples](samples/README.md) and
+See [integration](Docs/Integration.md), [consent](Docs/Consent.md),
+[source builds](Docs/SourceMode.md), [qualification](Docs/Qualification.md), [samples](samples/README.md), [changelog](CHANGELOG.md) and
 [third-party licenses](THIRD_PARTY_NOTICES.md).
 
 Build native artifacts with `bash src/Kapusch.PostHogApisForiOSComponents/Native/iOS/build.sh`, then:

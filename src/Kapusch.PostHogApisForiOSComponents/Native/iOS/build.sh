@@ -20,6 +20,7 @@ SCRATCH_DIR="$BUILD_DIR/spm"
 echo "[KapuschPostHogInterop] Building (iOS device arm64)..."
 swift build \
 	--package-path "$PACKAGE_DIR" \
+	--force-resolved-versions \
 	--scratch-path "$SCRATCH_DIR/iphoneos" \
 	-c release \
 	--sdk "$SDK_IPHONEOS_PATH" \
@@ -28,6 +29,7 @@ swift build \
 echo "[KapuschPostHogInterop] Building (iOS simulator arm64)..."
 swift build \
 	--package-path "$PACKAGE_DIR" \
+	--force-resolved-versions \
 	--scratch-path "$SCRATCH_DIR/iphonesimulator-arm64" \
 	-c release \
 	--sdk "$SDK_SIMULATOR_PATH" \
@@ -36,10 +38,23 @@ swift build \
 echo "[KapuschPostHogInterop] Building (iOS simulator x86_64)..."
 swift build \
 	--package-path "$PACKAGE_DIR" \
+	--force-resolved-versions \
 	--scratch-path "$SCRATCH_DIR/iphonesimulator-x86_64" \
 	-c release \
 	--sdk "$SDK_SIMULATOR_PATH" \
 	--triple "x86_64-apple-ios15.0-simulator"
+
+# --force-resolved-versions fails the build when Package.resolved disagrees with Package.swift;
+# also check that every checkout is the revision recorded in the dependency lock.
+LOCKED_REVISION="$(plutil -extract revision raw -o - "$REPO_DIR/DependencyLocks/posthog-ios.json")"
+for slice in iphoneos iphonesimulator-arm64 iphonesimulator-x86_64; do
+	checkout_revision="$(git -C "$SCRATCH_DIR/$slice/checkouts/posthog-ios" rev-parse HEAD)"
+	if [ "$checkout_revision" != "$LOCKED_REVISION" ]; then
+		echo "posthog-ios checkout for $slice is $checkout_revision, lock requires $LOCKED_REVISION" >&2
+		exit 1
+	fi
+done
+echo "[KapuschPostHogInterop] posthog-ios checkouts match lock revision $LOCKED_REVISION"
 
 IOS_LIB="$(find "$SCRATCH_DIR/iphoneos" -maxdepth 4 -path "*/release/libKapuschPostHogInterop.a" | head -n 1)"
 SIM_ARM64_LIB="$(find "$SCRATCH_DIR/iphonesimulator-arm64" -maxdepth 4 -path "*/release/libKapuschPostHogInterop.a" | head -n 1)"
