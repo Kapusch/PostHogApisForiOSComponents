@@ -51,20 +51,16 @@ in and queued Application Opened under the new anonymous ID. This confirms the
 `Reset()` caveat in [consent](Consent.md). Loopback refused all connections, so
 nothing here shows ingestion.
 
-## Manual publication
+## Publication
 
-Releases are manual: there is no tag trigger. The `publish.yml` workflow runs
-only through workflow_dispatch on `main` and publishes the version declared in
-the project (`VersionPrefix` plus `VersionSuffix`, currently `1.0.0-rc.1`). It
-creates no Git tag or GitHub release; tag the published commit by hand if needed.
-
-After device qualification, configure a NuGet.org Trusted Publishing policy
-for this repository and workflow `publish.yml`, using the NuGet profile `Kapusch`.
-The job uses GitHub OIDC through `NuGet/login@v1`; no permanent API key is required
-scoped to this package on NuGet.org. Run Publish verified NuGet package on main.
-The workflow rebuilds, scans, checks the dependency lock, packs, checks native
-entry points and links a consumer before publishing. Never overwrite a published
-version: for a later candidate bump `VersionSuffix` (`rc.2`); for the final
-release remove `VersionSuffix`. Update the sample's PackageReference to match;
-`verify-package.py` fails otherwise. No publication runs automatically on push.
-Device qualification remains a human-reviewed prerequisite.
+Publication follows the channel model in the [release workflow](Release.md). A
+`vX.Y.Z` or `vX.Y.Z-rc.N` tag on a commit reachable from `main` publishes that
+version to NuGet.org; a manual run without a version publishes a preview to
+GitHub Packages. The `publish.yml` workflow rebuilds, scans, checks the
+dependency lock, packs, checks native entry points and links a consumer before
+pushing. Never overwrite a published version: for a later candidate bump
+`VersionSuffix` (`rc.2`); for the final release remove `VersionSuffix`, and keep
+the sample's PackageReference equal to the version you tag. The one-time
+NuGet.org Trusted Publishing and `NUGET_USER` setup is described in the release
+workflow. Device qualification remains a human-reviewed prerequisite for a
+stable tag.
